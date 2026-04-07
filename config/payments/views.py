@@ -75,8 +75,8 @@ def process_payment(request):
         status=Payment.PaymentStatus.COMPLETED,
     )
 
-    # 3. Actualizar estado del pedido a "Pagado"
-    update_response = update_order_status(order_id, "Pagado")
+    # 3. Actualizar estado del pedido a "PAGADO"
+    update_response = update_order_status(order_id, "PAGADO")
 
     if not update_response["success"]:
         return Response(

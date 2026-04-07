@@ -8,7 +8,7 @@
 
 ### POST /payments/process/
 
-Procesa el pago de un pedido existente y, si es exitoso, solicita al Order Service cambiar el estado a `Pagado`.
+Procesa el pago de un pedido existente y, si es exitoso, solicita al Order Service cambiar el estado a `PAGADO`.
 
 #### Request JSON
 
@@ -32,7 +32,7 @@ Procesa el pago de un pedido existente y, si es exitoso, solicita al Order Servi
 
 #### Respuestas
 
-- `201 Created`: pago creado y pedido actualizado a `Pagado`.
+- `201 Created`: pago creado y pedido actualizado a `PAGADO`.
 - `202 Accepted`: pago creado pero no se pudo actualizar el estado del pedido.
 - `400 Bad Request`: datos inválidos o usuario no coincide con el pedido.
 - `404 Not Found`: pedido no encontrado en Order Service.
@@ -62,6 +62,6 @@ Procesa el pago de un pedido existente y, si es exitoso, solicita al Order Servi
 
 ```json
 {
-  "status": "Pagado"
+  "status": "PAGADO"
 }
 ```
