@@ -1,20 +1,22 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes
 
 from .models import Payment
 from .serializers import PaymentSerializer, ProcessPaymentSerializer
 from .services import get_order, update_order_status
 
-
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])  # Solo accesible para usuarios autenticados
 def list_payments(request):
     payments = Payment.objects.all().order_by("-created_at")
     serializer = PaymentSerializer(payments, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
-
 @api_view(["GET", "PUT", "DELETE"])
+@permission_classes([IsAuthenticated])  # Solo accesible para usuarios autenticados
 def payment_detail(request, payment_id):
     try:
         payment = Payment.objects.get(id=payment_id)
@@ -60,8 +62,8 @@ def payment_detail(request, payment_id):
     payment.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
 
-
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])  # Solo accesible para usuarios autenticados
 def process_payment(request):
     input_serializer = ProcessPaymentSerializer(data=request.data)
     input_serializer.is_valid(raise_exception=True)
