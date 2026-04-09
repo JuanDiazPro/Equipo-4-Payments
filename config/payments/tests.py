@@ -52,7 +52,7 @@ class ProcessPaymentTests(APITestCase):
         self.assertEqual(payment.status, Payment.PaymentStatus.COMPLETED)
 
         self.assertEqual(response.data["card_number"], "**** **** **** 1111")
-        self.assertIsNone(response.data["cvv"])
+        self.assertEqual(response.data["cvv"], "***")
 
     @patch(
         "payments.views.get_order",

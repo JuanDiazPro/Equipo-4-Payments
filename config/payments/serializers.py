@@ -78,4 +78,6 @@ class PaymentSerializer(serializers.ModelSerializer):
         return f"**** **** **** {obj.card_last4}"
 
     def get_cvv(self, obj):
-        return None
+        if not obj.cvv:
+            return None
+        return "***"

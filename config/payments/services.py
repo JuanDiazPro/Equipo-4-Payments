@@ -1,7 +1,7 @@
 import requests
 from requests import RequestException
 
-ORDER_SERVICE_URL = "http://localhost:8003/api/orders"
+ORDER_SERVICE_URL = "http://192.168.108.217:8000/api/orders"
 HTTP_TIMEOUT_SECONDS = 5
 
 

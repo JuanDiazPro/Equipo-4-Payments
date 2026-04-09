@@ -7,6 +7,60 @@ from .serializers import PaymentSerializer, ProcessPaymentSerializer
 from .services import get_order, update_order_status
 
 
+@api_view(["GET"])
+def list_payments(request):
+    payments = Payment.objects.all().order_by("-created_at")
+    serializer = PaymentSerializer(payments, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["GET", "PUT", "DELETE"])
+def payment_detail(request, payment_id):
+    try:
+        payment = Payment.objects.get(id=payment_id)
+    except Payment.DoesNotExist:
+        return Response(
+            {"error": "Pago no encontrado"},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
+    if request.method == "GET":
+        serializer = PaymentSerializer(payment)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    if request.method == "PUT":
+        allowed_fields = {
+            "order_id",
+            "user_id",
+            "card_number",
+            "expiration_date",
+            "cvv",
+            "status",
+        }
+        payload = {k: v for k, v in request.data.items() if k in allowed_fields}
+
+        validation_serializer = ProcessPaymentSerializer(data=payload)
+        validation_serializer.is_valid(raise_exception=True)
+        validated = validation_serializer.validated_data
+
+        payment.order_id = validated["order_id"]
+        payment.user_id = validated["user_id"]
+        payment.card_number = validated["card_number"]
+        payment.card_last4 = validated["card_number"][-4:]
+        payment.expiration_date = validated["expiration_date"]
+        payment.cvv = validated["cvv"]
+
+        if "status" in payload:
+            payment.status = payload["status"]
+
+        payment.save()
+        serializer = PaymentSerializer(payment)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    payment.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 @api_view(["POST"])
 def process_payment(request):
     input_serializer = ProcessPaymentSerializer(data=request.data)
